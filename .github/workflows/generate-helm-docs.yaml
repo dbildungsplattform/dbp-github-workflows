@@ -35,7 +35,7 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.ref }}
     - name: Render Helm-Docs
-      uses: dBildungsplattform/dbp-github-workflows/.github/actions/helm-docs@helm-action-1.0.1
+      uses: dbildungsplattform/dbp-github-workflows/.github/actions/helm-docs@helm-action-1.0.1
       with:
         # provide name of dirs to run helm-docs on, separate by comma without space
         src_path: ${{ inputs.src_path_helm}}
