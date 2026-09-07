@@ -87,6 +87,7 @@ jobs:
           trivyignores: ${{ inputs.trivyignores }}
           skip-dirs: ${{ inputs.skip_dirs }}
           skip-files: ${{ inputs.skip_files }}
+          version: "0.74.0"
         env:
           TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db
           TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db
