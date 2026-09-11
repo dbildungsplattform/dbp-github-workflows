@@ -69,7 +69,6 @@ jobs:
         run: echo "output=${image_ref,,}" >> $GITHUB_OUTPUT
       
       - name: Checkout code
-        if: ${{ inputs.trivyignores != '' || inputs.scan_type == 'fs' }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Run Trivy vulnerability scanner on image or filesystem
@@ -87,6 +86,7 @@ jobs:
           trivyignores: ${{ inputs.trivyignores }}
           skip-dirs: ${{ inputs.skip_dirs }}
           skip-files: ${{ inputs.skip_files }}
+          version: "v0.74.0"
         env:
           TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db
           TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db

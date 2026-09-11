@@ -241,7 +241,7 @@ jobs:
     permissions:
       packages: read
       security-events: write
-    uses: dbildungsplattform/dbp-github-workflows/.github/workflows/check-trivy.yaml@d7318717e25b71a8204a5039ff93b591b42f69a6 # 8.4.0
+    uses: dbildungsplattform/dbp-github-workflows/.github/workflows/check-trivy.yaml@4b5c0434f28b537e9199ffebc21f4e6e39cbcdde # 8.4.3
     with:
       image_ref: ${{ needs.pre_scan.outputs.registry_and_owner }}/${{ inputs.image_name }}@${{ needs.build_and_upload_image.outputs.digest }}
       severity: ${{ inputs.trivy_severity }}
@@ -256,6 +256,6 @@ jobs:
     name: ClamAV scan of uploaded image
     needs: [build_and_upload_image, pre_scan]
     if: ${{ inputs.run_clamav_scan }}
-    uses: dbildungsplattform/dbp-github-workflows/.github/workflows/check-image-clamav.yaml@d7318717e25b71a8204a5039ff93b591b42f69a6 # 8.4.0
+    uses: dbildungsplattform/dbp-github-workflows/.github/workflows/check-image-clamav.yaml@4b5c0434f28b537e9199ffebc21f4e6e39cbcdde # 8.4.3
     with:
       image_ref: ${{ needs.pre_scan.outputs.registry_and_owner }}/${{ inputs.image_name }}@${{ needs.build_and_upload_image.outputs.digest }}
