@@ -55,8 +55,10 @@ jobs:
             exit 1
           fi
 
-  tests_sonarcloud:
-    name: Tests and Sonarcloud
+  tests:
+    name: Tests
+    needs: validate_inputs
+    if: ${{ !inputs.skip_tests }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -88,21 +90,39 @@ jobs:
         run: npm ci --prefer-offline --no-audit
 
       - name: Run tests
-        if: ${{ !inputs.skip_tests }}
         run: npm run test:ci
 
-      - name: Save test artifacts
-        if: ${{ !inputs.skip_tests }}
-        run: |
-          mkdir -p coverage
-          mv ./coverage artifacts
-
-      - name: Upload test artifacts
-        if: ${{ !inputs.skip_tests }}
+      - name: Upload coverage artifacts
+        # Upload even when tests fail so SonarCloud can still consume the coverage.
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  #v4.3.1
         with:
-          name: test-artifacts
-          path: artifacts/
+          name: coverage-artifacts
+          path: coverage/
+
+  sonarcloud:
+    name: SonarCloud
+    needs: [validate_inputs, tests]
+    # Run the scan regardless of the test outcome (but not when the run is cancelled).
+    if: ${{ !cancelled() && needs.validate_inputs.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Download coverage artifacts
+        if: ${{ !inputs.skip_tests }}
+        # Don't fail the scan if tests never produced a coverage artifact.
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: coverage-artifacts
+          path: coverage/
 
       - name: SonarCloud upload
         uses: SonarSource/sonarqube-scan-action@1a6d90ebcb0e6a6b1d87e37ba693fe453195ae25 #v5.3.1
