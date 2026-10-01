@@ -42,6 +42,16 @@ on:
         required: false
         default: 'image'
         type: string
+      skip_dirs:
+        description: 'comma separated list of directories where traversal is skipped'
+        required: false
+        default: ''
+        type: string
+      skip_files:
+        description: 'comma separated list of files to be skipped'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   trivy_scan:
@@ -59,11 +69,10 @@ jobs:
         run: echo "output=${image_ref,,}" >> $GITHUB_OUTPUT
       
       - name: Checkout code
-        if: ${{ inputs.trivyignores != '' || inputs.scan_type == 'fs' }}
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  #v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Run Trivy vulnerability scanner on image or filesystem
-        uses: aquasecurity/trivy-action@84384bd6e777ef152729993b8145ea352e9dd3ef #v0.17.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           scan-type: ${{ inputs.scan_type }}
           image-ref: ${{ steps.image_ref_lower.outputs.output }} # if scan is for image, will be ignored for filesystem scan
@@ -75,6 +84,9 @@ jobs:
           ignore-unfixed: ${{ inputs.ignore-unfixed }}
           limit-severities-for-sarif: ${{ inputs.limit-severities-for-sarif }}
           trivyignores: ${{ inputs.trivyignores }}
+          skip-dirs: ${{ inputs.skip_dirs }}
+          skip-files: ${{ inputs.skip_files }}
+          version: "v0.74.0"
         env:
           TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db
           TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db
@@ -87,7 +99,7 @@ jobs:
           
       - name: Upload Trivy scan results to GitHub Security tab
         if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@02c5e83432fe5497fd85b873b6c9f16a8578e1d9 #v3.37.0
+        uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
             sarif_file: 'trivy-results.sarif'
             category: 'trivy-${{ inputs.scan_type }}-scan'

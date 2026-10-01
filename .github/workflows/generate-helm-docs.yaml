@@ -31,11 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checking out code to Runner
-      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  #v6.0.3
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         ref: ${{ github.event.pull_request.head.ref }}
     - name: Render Helm-Docs
-      uses: dBildungsplattform/dbp-github-workflows/.github/actions/helm-docs@helm-action-1.0.1
+      uses: dbildungsplattform/dbp-github-workflows/.github/actions/helm-docs@b62291e9bfc14166f431ec44d0b2273dbbf3a2b0 # helm-action-1.0.1
       with:
         # provide name of dirs to run helm-docs on, separate by comma without space
         src_path: ${{ inputs.src_path_helm}}
