@@ -88,17 +88,17 @@ jobs:
           skip-files: ${{ inputs.skip_files }}
           version: "v0.74.0"
         env:
-          TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db
-          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db
+          TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db:1,ghcr.io/aquasecurity/trivy-java-db:1
+          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2
 
       - name: Override location of findings
-        if: ${{ always() && inputs.report_location != '' }}
+        if: ${{ always() && inputs.report_location != '' && hashFiles('trivy-results.sarif') != '' }}
         run: |
           jq '.runs[].results[].locations[].physicalLocation.artifactLocation.uri |= "${{ inputs.report_location }}"' trivy-results.sarif > trivy-results-tmp.sarif
           mv trivy-results-tmp.sarif trivy-results.sarif
           
       - name: Upload Trivy scan results to GitHub Security tab
-        if: ${{ always() }}
+        if: ${{ always() && (success() || hashFiles('trivy-results.sarif') != '') }}
         uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
             sarif_file: 'trivy-results.sarif'
