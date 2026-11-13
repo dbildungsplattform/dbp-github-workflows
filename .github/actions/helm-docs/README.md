@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: dbildungsplattform/dbp-github-workflows/.github/workflows/generate-helm-docs.yaml@main
+      - uses: dbildungsplattform/dbp-github-workflows/.github/workflows/generate-helm-docs.yaml@1ac3d590f10f815b6c0fa2d84bc5a24d120e0eb3 # main
         with: 
           # provide list of dirs to run helm-docs on, separate by comma without a space
           src_path: sample_charts,sample_charts2
