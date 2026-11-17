@@ -241,6 +241,7 @@ jobs:
     permissions:
       packages: read
       security-events: write
+      contents: read
     uses: ./.github/workflows/check-trivy.yaml
     with:
       image_ref: ${{ needs.pre_scan.outputs.registry_and_owner }}/${{ inputs.image_name }}@${{ needs.build_and_upload_image.outputs.digest }}
