@@ -61,6 +61,7 @@ jobs:
         packages: read
         security-events: write
         contents: read
+        actions: read
     steps:
         # GHCR requires the image to be all lowercase, otherwise trivy can't pull the image
       - name: Create lowercase image ref
